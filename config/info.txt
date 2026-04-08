@@ -1,0 +1,1 @@
+Folder for your configuration files (mosquitto.config, acl, passwd)

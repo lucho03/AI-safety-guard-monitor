@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SCADA Monitor</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    </head>
+
+    <body>
+        <h2>Flow Rate</h2>
+        <canvas id="flowChart"></canvas>
+
+        <h2>Tank Level</h2>
+        <canvas id="levelChart"></canvas>
+
+        <script>
+            const socket = io("http://127.0.0.1:5000/");
+
+            socket.on('connect', () => {
+                console.log("Status: Connected (ID: " + socket.id + ")");
+                console.log(socket.connected);
+            });
+
+            socket.on('disconnect', () => {
+                console.log("Status: Connection lost");
+            });
+
+            socket.onAny((event, ...args) => {
+                console.log("Received event:", event, args);
+            });
+
+            let flowData = [];
+            let levelData = [];
+            let labels = [];
+
+            // ---------- Charts ----------
+            const flowChart = new Chart(document.getElementById("flowChart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Flow Rate",
+                        data: flowData
+                    }]
+                }
+            });
+
+            const levelChart = new Chart(document.getElementById("levelChart"), {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Tank Level",
+                        data: levelData
+                    }]
+                }
+            });
+
+            // ---------- Updates ----------
+            socket.on("flow_update", (msg) => {
+                updateChart(flowChart, flowData, msg.value);
+                console.log(`Received flow update: ${msg.value}`);
+            });
+
+            socket.on("level_update", (msg) => {
+                updateChart(levelChart, levelData, msg.value);
+                console.log(`Received level update: ${msg.value}`);
+            });
+
+            function updateChart(chart, dataArray, value) {
+                const time = new Date().toLocaleTimeString();
+
+                dataArray.push(value);
+                labels.push(time);
+
+                if (dataArray.length > 50) {
+                    dataArray.shift();
+                    labels.shift();
+                }
+
+                chart.update();
+            }
+        </script>
+    </body>
+</html>
