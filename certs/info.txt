@@ -1,1 +1,1 @@
-This folder holds the certificates for secure communication between the nodes
+This folder holds the certificates for secure communication between the nodes (.key, .crt, csr)

@@ -1,0 +1,7 @@
+user user1
+topic read factory/zone1
+topic write factory/zone2
+
+user user2
+topic write factory/zone1
+topic read factory/zone2

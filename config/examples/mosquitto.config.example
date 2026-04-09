@@ -1,0 +1,9 @@
+listener {port}
+
+cafile .../{path_to}/ca.crt
+certfile .../{path_to}/server.crt
+keyfile .../{path_to}/server.key
+
+allow_anonymous {true/false}
+password_file .../{path_to}/passwd
+acl_file .../{path_to}/acl
