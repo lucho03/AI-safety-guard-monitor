@@ -7,7 +7,6 @@ import os
 
 load_dotenv()
 
-# PLC MQTT client setup
 TOPIC_DEBIT = os.getenv("TOPIC_DEBIT")
 TOPIC_QUANTITY = os.getenv("TOPIC_QUANTITY")
 
@@ -67,9 +66,3 @@ client.on_message = on_message
 client.subscribe(TOPIC_DEBIT)
 client.subscribe(TOPIC_QUANTITY)
 client.loop_forever()
-
-# while True:
-#     client.publish(os.getenv("TOPIC_RECEIVE"), json.dumps({
-#         "pump_rate": 0.0
-#     }))
-

@@ -1,9 +1,14 @@
 import json
 import os
+import socket
+import json
 import paho.mqtt.client as mqtt
 from dotenv import load_dotenv
 
 load_dotenv()
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((os.getenv("HOST"), int(os.getenv("PIPE_PORT_LISTENING"))))
 
 client = mqtt.Client()
 client.username_pw_set(os.getenv("ACTUATOR_USERNAME"), os.getenv("ACTUATOR_PASSWORD"))
@@ -14,19 +19,14 @@ client.tls_set(
 )
 client.connect(os.getenv("BROKER"), int(os.getenv("PORT")))
 
-pump_rate = 1.0
-
 def on_message(client, userdata, msg):
     global pump_rate
     data = json.loads(msg.payload)
+    print("Pump set to:", data["pump_rate"])
 
-    pump_rate += data["pump_rate"]
-
-    print("Pump set to:", pump_rate)
-
-    # client.publish(os.getenv("TOPIC_COMMAND"), json.dumps({
-    #     "pump_rate": pump_rate
-    # }))
+    sock.send(json.dumps({
+        "pump_rate": data["pump_rate"]
+    }).encode())
 
 client.on_message = on_message
 client.subscribe(os.getenv("TOPIC_PUMP_ACC"))

@@ -1,4 +1,6 @@
 # AI-safety-guard-monitor
+
+multi-layer cyber-physical architecture
 Prototype for monitoring an AI component in an OT environment with threshold-based control and fallback to a non-AI mode
 
 Ще се имплементира:
