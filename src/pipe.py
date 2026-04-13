@@ -80,8 +80,12 @@ def simulation_loop():
 
     while True:
         with lock:
+            # помпата НЕ променя дебита мигновено
+            # flow_rate плавно се доближава до pump_rate
+            # first-order inertia model
             flow_rate += (pump_rate - flow_rate) * 0.2
 
+            # коефициент за скорост на пълнене
             tank_level += flow_rate * 0.1
             tank_level = max(0, min(capacity, tank_level))
 

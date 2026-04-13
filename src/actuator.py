@@ -20,7 +20,6 @@ client.tls_set(
 client.connect(os.getenv("BROKER"), int(os.getenv("PORT")))
 
 def on_message(client, userdata, msg):
-    global pump_rate
     data = json.loads(msg.payload)
     print("Pump set to:", data["pump_rate"])
 
