@@ -3,6 +3,7 @@ import threading
 import json
 import time
 import os
+import random
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +24,34 @@ flow_clients = []
 level_clients = []
 
 lock = threading.Lock()
+
+first_fill_time = None
+
+def leak(flow_rate):
+    leak_factor = random.uniform(0.05, 0.15)
+
+    return -(flow_rate * leak_factor)
+
+def half(tank_level):
+    global first_fill_time
+
+    if tank_level > 0 and first_fill_time is None:
+        first_fill_time = time.time()
+        print("[HALF] Timer started")
+
+    if first_fill_time is None:
+        return tank_level
+
+    elapsed = time.time() - first_fill_time
+
+    if elapsed >= 60:
+        first_fill_time = time.time()
+
+        print("[HALF] Tank reduced by half")
+
+        return tank_level / 2
+
+    return tank_level
 
 def actuator_process():
     global pump_rate
@@ -87,6 +116,7 @@ def simulation_loop():
 
             # коефициент за скорост на пълнене
             tank_level += flow_rate * 0.1
+            tank_level = half(tank_level)
             tank_level = max(0, min(capacity, tank_level))
 
             flow_msg = json.dumps({"flow_rate": round(flow_rate, 2)}).encode()

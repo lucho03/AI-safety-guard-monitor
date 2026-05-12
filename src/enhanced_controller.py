@@ -85,6 +85,7 @@ def on_message(client, userdata, msg):
 
     if msg.topic == TOPIC_QUANTITY:
         current_level = data["level"]
+        stop_pumping = current_level > 90
 
         print(f"Tank level: {current_level}")
 
@@ -113,6 +114,7 @@ def on_message(client, userdata, msg):
         
         data_buffer.append([flow])
 
+        # This has to be stopped when it's used in production
         if len(data_buffer) >= 50:
             print("🧠 Training model...")
             model.fit(data_buffer)
